@@ -7,9 +7,12 @@ import os.path
 import pandas as pd
 import pytz
 
+''' API for a ML model to predict the fare of a NYC cab '''
 
+# Instantiate app
 app = FastAPI()
 
+# allow all connections
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows all origins
@@ -18,10 +21,12 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
+# root point
 @app.get("/")
 def index():
     return {"greeting": "Hello world"}
 
+#predict method
 @app.get("/predict")
 def predict(request : Request):
     # Get request argument, put them in a dict
@@ -47,7 +52,7 @@ def predict(request : Request):
     df['pickup_datetime'] = df['pickup_datetime'].apply(
         lambda x: x.strftime("%Y-%m-%d %H:%M:%S UTC"))
 
-    # load model
+    # load model, predict fare
     model = load(os.path.dirname(__file__) + '/../model.joblib')
     y_pred = model.predict(df)[0]
 
